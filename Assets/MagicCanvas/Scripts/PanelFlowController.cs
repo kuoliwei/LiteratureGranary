@@ -52,6 +52,7 @@ public class PanelFlowController : MonoBehaviour
     // pendingTaskId：你在 HandleStyleTaskCreated() 內已經有存起來
     [SerializeField] private StyleTransformFinishHintController finishHintCtrl;
     [SerializeField] private DragPicturesHintController dragPicturesHintCtrl;
+    [SerializeField] private ScratchManager scratchManager;
 
 
     void Start()
@@ -270,6 +271,8 @@ public class PanelFlowController : MonoBehaviour
                 // 只顯示底圖與刮刮樂遮罩
                 texHiddenImagePanel.SetActive(true);
                 scratchSurfacePanel.SetActive(true);
+                if (scratchManager != null)
+                    scratchManager.ShowImage(); // 每次進入刮刮遊戲 → 換下一張底圖
                 break;
 
             case FlowState.DragPicturesHint:

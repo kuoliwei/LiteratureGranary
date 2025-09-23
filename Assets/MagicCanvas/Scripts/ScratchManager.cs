@@ -36,8 +36,10 @@ public class ScratchManager : MonoBehaviour
         {
             card.Init();
             card.SetBrush(brushTexture, eraseMaterial, brushSize);
+            card.SetMask(maskImages[0]);
+            card.ResetScratch();
         }
-        ShowImageAt(0);
+        //ShowImageAt(0);
     }
 
     // === 可庫美學：開始預覽 ===
@@ -75,9 +77,14 @@ public class ScratchManager : MonoBehaviour
         takingPhotoPanel.SetActive(false);
         scratchSurface.SetActive(true);
     }
-
+    public void ShowImage()
+    {
+        //int nextIndex = (currentIndex + 1) % backgroundImages.Count;
+        int nextIndex = currentIndex;
+        ShowImageAt(nextIndex);
+    }
     // ==== 既有刮刮卡流程（原樣保留） ====
-    public void ShowImageAt(int index)
+    private void ShowImageAt(int index)
     {
         if (index >= backgroundImages.Count) index = 0;
         currentIndex = index;
@@ -93,6 +100,7 @@ public class ScratchManager : MonoBehaviour
             card.SetMask(maskImages[index]);
             card.ResetScratch();
         }
+        currentIndex += 1;
     }
 
     private IEnumerator AutoRestoreAfterDelay(ScratchCard target)

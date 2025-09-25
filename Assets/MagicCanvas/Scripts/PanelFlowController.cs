@@ -272,7 +272,10 @@ public class PanelFlowController : MonoBehaviour
                 texHiddenImagePanel.SetActive(true);
                 scratchSurfacePanel.SetActive(true);
                 if (scratchManager != null)
+                {
                     scratchManager.ShowImage(); // 每次進入刮刮遊戲 → 換下一張底圖
+                    scratchManager.StartCountingExperienceTime(); // [PORTED FROM KOKU]
+                }
                 break;
 
             case FlowState.DragPicturesHint:

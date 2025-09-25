@@ -10,12 +10,13 @@ public class ScratchManager : MonoBehaviour
     public List<Texture> backgroundImages;
     public List<RawImage> backgroundRenderers;
     public List<ScratchCard> scratchCards;
-    public float clearThreshold = 0.6f;
-    public float revealHoldTime = 15f;
-    public float restoreSpeed = 1f;
+    public float ExperienceTimeLimit; // 幾秒後自動完成 [PORTED FROM KOKU]
+    public float clearThreshold;
+    public float revealHoldTime;
+    public float restoreSpeed;
     public Texture brushTexture;
     public Material eraseMaterial;
-    public float brushSize = 64f;
+    public float brushSize;
 
     [Header("Koku Aesthetic UI")]
     [SerializeField] private RawImage previewImage; // TakingPhotoPanel/RawImage（即時預覽）
@@ -23,7 +24,7 @@ public class ScratchManager : MonoBehaviour
     [SerializeField] private GameObject takingPhotoPanel;
     [SerializeField] private GameObject scratchSurface;
     [SerializeField] private WebCamController webCam;
-    [SerializeField] private PanelFlowController flow; // 新增
+    [SerializeField] private PanelFlowController flow;
 
     private int currentIndex = 0;
     private bool imageFullyRevealed = false;
@@ -118,7 +119,31 @@ public class ScratchManager : MonoBehaviour
         while (randomIndex == currentIndex);
         return randomIndex;
     }
+    // [PORTED FROM KOKU] → 啟動超時計時
+    public void StartCountingExperienceTime()
+    {
+        var routine = StartCoroutine(ForceRevealAfterDelay(ExperienceTimeLimit));
+        restoreRoutines.Add(routine);
+    }
+    // [PORTED FROM KOKU] → 超時強制揭露
+    private IEnumerator ForceRevealAfterDelay(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
 
+        if (!imageFullyRevealed)
+        {
+            foreach (var card in scratchCards)
+            {
+                card.ShowFullImage();
+                revealedCards.Add(card);
+            }
+
+            imageFullyRevealed = true;
+
+            if (flow != null)
+                flow.Sys_OnScratchRevealComplete();
+        }
+    }
     private void Update()
     {
         if (imageFullyRevealed) return;
